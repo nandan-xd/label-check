@@ -41,17 +41,21 @@ def extract_text(image):
         return "No text detected."
     return parsed_results[0]["ParsedText"]
 
+def get_rules():
+    rules = LegalRule.query.all()
+    return rules
+
 def process_text(ocr_text):
     pass
 
-def check_compliance(product_data):
+def check_compliance(product_data, rules):
     pass
     
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     extracted_text = None
     processed_text = None
+    rules = get_rules()
     if request.method == "POST":
         image = request.files.get("image")
         if image and image.filename:
