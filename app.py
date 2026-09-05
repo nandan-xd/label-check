@@ -1,32 +1,63 @@
-from flask import Flask, sessions, redirect, url_for, render_template, request
+from flask import Flask, render_template, request
 import requests
 import os
 from dotenv import load_dotenv
+from flask_sqlalchemy import SQLAlchemy
 load_dotenv()
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+db = SQLAlchemy(app)
 
-def extractText(image):
-    payload = {'isOverlayRequired': 'false', 'apikey': os.getenv('OCR_API_KEY'), 'language': 'eng'}
+class LegalRule(db.Model):
+    __tablename__ = "legal_rules"
+    rule_id = db.Column(db.Integer, primary_key=True)
+    product_category = db.Column(db.String(100))
+    field = db.Column(db.String(100))
+    requirement = db.Column(db.Text)
+    requirement_type = db.Column(db.String(50))
+    exception_condition = db.Column(db.Text)
+    applicable_section = db.Column(db.String(100))
+    engine_check = db.Column(db.String(100))
+    source_notes = db.Column(db.Text)
 
-    files = {'file': (image.filename, image.stream, image.mimetype)}
+with app.app_context():
+    db.create_all()
 
-    r = requests.post(
-        'https://api.ocr.space/parse/image', files=files, data=payload)
-    return r.text
+def extract_text(image):
+    payload = {"apikey": os.getenv("OCR_API_KEY"), "language": "eng", "isOverlayRequired": "false"}
 
-@app.route('/', methods=['GET', 'POST'])
+    files = {"file": (image.filename, image.stream, image.content_type)}
+
+    response = requests.post("https://api.ocr.space/parse/image", files=files, data=payload)
+    result = response.json()
+    if result.get("IsErroredOnProcessing"):
+        return "OCR failed"
+    parsed_results = result.get("ParsedResults")
+    if not parsed_results:
+        return "No text detected."
+    return parsed_results[0]["ParsedText"]
+
+def process_text(ocr_text):
+    pass
+
+def check_compliance(product_data):
+    pass
+    
+
+@app.route("/", methods=["GET", "POST"])
 def index():
     extracted_text = None
-    if request.method == 'POST':
-        image = request.files['image']
-        if image:
-            extracted_text = extractText(image)
-            print(extracted_text)
-        
-    return render_template("index.html", extracted_text=extracted_text if request.method == 'POST' else None) 
+    processed_text = None
+    if request.method == "POST":
+        image = request.files.get("image")
+        if image and image.filename:
+            extracted_text = extract_text(image)
+            processed_text = process_text(extracted_text)
+    return render_template("index.html", extracted_text=extracted_text, processed_text=processed_text)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
