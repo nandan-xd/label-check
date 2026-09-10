@@ -3,57 +3,822 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>LabelCheck</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --cream: #f4f1e8;
+            --paper: #fffdf7;
+            --black: #111111;
+            --orange: #d97832;
+            --blue: #3f64a8;
+            --muted: #686868;
+            --light-line: #d5d1c7;
+            --red: #c94b3c;
+            --green: #46795f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--cream);
+            color: var(--black);
+            font-family: "JetBrains Mono", monospace;
+            font-size: 14px;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: var(--black) !important;
+            padding: 0;
+            border-bottom: 3px solid var(--black);
+        }
+
+        .navbar .container { min-height: 66px; }
+
+        .navbar-brand {
+            color: white !important;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.7px;
+            padding: 8px 12px;
+            border: 2px solid white;
+            text-decoration: none;
+        }
+
+        .navbar-brand:hover {
+            color: var(--black) !important;
+            background: white;
+        }
+
+        .nav-label {
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* MAIN */
+
+        .content-wrapper { padding: 45px 0 60px; }
+
+        .page-header { margin-bottom: 28px; }
+
+        .page-header h1 {
+            color: var(--black);
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+
+        .page-header p {
+            max-width: 760px;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.8;
+            margin-bottom: 0;
+        }
+
+        /* CARDS */
+
+        .card {
+            background: var(--paper) !important;
+            border: 2px solid var(--black) !important;
+            border-radius: 0 !important;
+            box-shadow: 7px 7px 0 var(--black) !important;
+        }
+
+        .card-body { background: var(--paper); }
+
+        .section-title {
+            color: var(--black);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .badge-label {
+            display: inline-block;
+            background: var(--blue);
+            color: white;
+            border: 1px solid var(--black);
+            border-radius: 0;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 5px 8px;
+            white-space: nowrap;
+        }
+
+        /* BUTTONS */
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn {
+            border-radius: 0 !important;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 11px 17px;
+            border-width: 2px;
+            transition: background .12s ease, color .12s ease, transform .12s ease;
+        }
+
+        .btn:hover { transform: translate(-1px, -1px); }
+
+        .btn-primary {
+            background: var(--orange);
+            border-color: var(--black);
+            color: var(--black);
+        }
+
+        .btn-primary:hover {
+            background: var(--blue);
+            border-color: var(--black);
+            color: white;
+        }
+
+        .btn-outline-primary {
+            color: var(--black);
+            background: transparent;
+            border-color: var(--black);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--blue);
+            border-color: var(--black);
+            color: white;
+        }
+
+        .capture-btn {
+            background: var(--blue);
+            color: white;
+            border-color: var(--black);
+        }
+
+        .capture-btn:hover {
+            background: var(--orange);
+            color: var(--black);
+        }
+
+        /* IMAGES */
+
+        .image-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 22px;
+            margin-bottom: 10px;
+            font-size: 10px;
+        }
+
+        .image-count {
+            background: var(--black);
+            color: white;
+            padding: 4px 7px;
+            border: 1px solid var(--black);
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .preview-container {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .preview-item {
+            position: relative;
+            background: var(--paper);
+            border: 2px solid var(--black);
+            box-shadow: 4px 4px 0 var(--black);
+        }
+
+        .preview-item img {
+            display: block;
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .preview-label {
+            padding: 8px 9px;
+            border-top: 2px solid var(--black);
+            font-size: 9px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .remove-image {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 27px;
+            height: 27px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            background: var(--black);
+            color: white;
+            border: 2px solid white;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .remove-image:hover {
+            background: var(--orange);
+            color: var(--black);
+        }
+
+        .empty-state {
+            padding: 28px 20px;
+            text-align: center;
+            color: var(--muted);
+            border: 2px dashed var(--black);
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        /* RESULT TABLE */
+
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--black);
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background: var(--black) !important;
+            color: white !important;
+            border-color: var(--black) !important;
+            font-size: 10px;
+        }
+
+        .table td {
+            border-color: var(--black) !important;
+            font-size: 10px;
+            vertical-align: middle;
+        }
+
+        .not-detected {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        /* RESULTS */
+
+        .results-section { margin-top: 35px; }
+
+        .result-card { margin-bottom: 18px; }
+
+        .result-header {
+            padding: 13px 16px;
+            border-bottom: 2px solid var(--black);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .result-name {
+            font-size: 11px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .result-status {
+            display: inline-block;
+            padding: 4px 7px;
+            background: var(--green);
+            color: white;
+            border: 1px solid var(--black);
+            font-size: 8px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .result-status.failed { background: var(--red); }
+
+        .result-body { padding: 16px; }
+
+        .result-body pre {
+            margin: 0;
+            background: #f1ede3;
+            border: 2px solid var(--black);
+            padding: 15px;
+            font-family: "JetBrains Mono", monospace;
+            font-size: 10px;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .result-error {
+            color: var(--red);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* CAMERA */
+
+        .camera-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(17, 17, 17, .88);
+            z-index: 1050;
+        }
+
+        .camera-modal.active { display: flex; }
+
+        .camera-box {
+            width: 100%;
+            max-width: 760px;
+            background: var(--paper);
+            border: 2px solid var(--black);
+            box-shadow: 9px 9px 0 var(--black);
+        }
+
+        .camera-header {
+            padding: 13px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 2px solid var(--black);
+        }
+
+        .camera-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .camera-hint {
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        #cameraVideo {
+            display: block;
+            width: 100%;
+            max-height: 65vh;
+            object-fit: contain;
+            background: #111111;
+        }
+
+        #cameraCanvas { display: none; }
+
+        .camera-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 13px;
+        }
+
+        /* SCANNING */
+
+        .scan-overlay {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(244, 241, 232, .88);
+            z-index: 1100;
+        }
+
+        .scan-overlay.active { display: flex; }
+
+        .scan-box {
+            width: min(90%, 380px);
+            background: var(--paper);
+            border: 2px solid var(--black);
+            box-shadow: 7px 7px 0 var(--black);
+            padding: 25px;
+            text-align: center;
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            margin: 0 auto 15px;
+            border: 3px solid var(--light-line);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .scan-box h3 {
+            margin: 0 0 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .scan-box p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* ALERT */
+
+        .alert {
+            border: 2px solid var(--black);
+            border-radius: 0;
+            font-size: 10px;
+            background: var(--paper);
+            color: var(--black);
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 767px) {
+            .content-wrapper { padding-top: 30px; }
+            .page-header h1 { font-size: 22px; }
+            .action-grid { grid-template-columns: 1fr; }
+            .preview-container { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .preview-item img { height: 150px; }
+            .camera-header { align-items: flex-start; flex-direction: column; }
+            .camera-controls { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .preview-container { grid-template-columns: 1fr; }
+            .preview-item img { height: 190px; }
+            .navbar .container { padding-top: 10px; padding-bottom: 10px; }
+        }
+    </style>
 </head>
+
 <body>
 
-    <h1>LabelCheck</h1>
-    <h2>Scan Product Label</h2>
-    <form action="/" method="POST" enctype="multipart/form-data">
-        <label for="image">
-            Select product label image:
-        </label>
-        <br><br>
-        <input type="file" id="image" name="image" accept="image/*" required>
-        <br><br>
-        <!-- Image Preview -->
-        <img id="image-preview" src="#" alt="Selected product label" style="display: none; max-width: 400px; max-height: 400px; ">
+<nav class="navbar navbar-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">LabelCheck</a>
+        <span class="nav-label">LEGAL METROLOGY</span>
+    </div>
+</nav>
 
-        <br><br>
+<main class="container content-wrapper">
 
-        <button type="submit">
-            Scan Label
-        </button>
-        {% if extracted_text %}
-            <h2>Extracted Text</h2>
-            <pre>{{ extracted_text }}</pre>
-        {% endif %}
-        <br><br>
-        {% if processed_text %}
-            <h2>Processed Text</h2>
-            <pre>{{ processed_text }}</pre>
-        {% endif %}
-    </form>
+    <div class="page-header">
+        <h1>Product Label Inspection</h1>
+        <p>Capture or upload product-label images for structured information extraction and compliance verification.</p>
+    </div>
 
-    <script>
+    <div class="card">
+        <div class="card-body p-4">
 
-        const imageInput = document.getElementById("image");
-        const imagePreview = document.getElementById("image-preview");
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <div class="section-title">New Inspection</div>
+                    <div class="section-subtitle mt-1">Capture multiple sides when required.</div>
+                </div>
+                <span class="badge-label">STEP 01 · CAPTURE</span>
+            </div>
 
-        imageInput.addEventListener("change", function () {
+            <form method="POST" enctype="multipart/form-data" id="scanForm">
 
-            const file = this.files[0];
+                <input type="file" id="galleryInput" name="images" accept="image/*" multiple hidden>
+                <input type="file" id="mobileCameraInput" accept="image/*" capture="environment" hidden>
 
-            if (file) {
-                imagePreview.src = URL.createObjectURL(file);
-                imagePreview.style.display = "block";
-            } else {
-                imagePreview.style.display = "none";
+                <div class="action-grid">
+                    <button type="button" class="btn capture-btn" id="cameraButton">📷 CAPTURE LABEL</button>
+                    <button type="button" class="btn btn-outline-primary" id="galleryButton">SELECT FROM DEVICE</button>
+                </div>
+
+                <div class="image-meta">
+                    <span>Inspection images</span>
+                    <span class="image-count" id="imageCount">0</span>
+                </div>
+
+                <div id="previewContainer" class="preview-container"></div>
+
+                <div id="emptyState" class="empty-state mt-3">
+                    No label images selected.<br>
+                    Capture the front, back or side of the package.
+                </div>
+
+                <button type="submit" class="btn btn-primary scan-button" id="scanButton">SCAN & INSPECT</button>
+
+            </form>
+        </div>
+    </div>
+
+{% if merged_fields %}
+
+<section class="results-section">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="section-title">Inspection Result</div>
+        <span class="badge-label">STEP 02 · EXTRACT</span>
+    </div>
+
+    <div class="card result-card">
+
+        <div class="result-header">
+            <div class="result-name">EXTRACTED DECLARATIONS</div>
+            <span class="result-status">PROCESSED</span>
+        </div>
+
+        <div class="result-body">
+
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>FIELD</th>
+                            <th>DETECTED VALUE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for key, item in merged_fields.items() %}
+                        <tr>
+                            <td>{{ key|replace("_", " ")|upper }}</td>
+
+                            <td>
+                                {% if item.value %}
+                                    {{ item.value }}
+                                {% else %}
+                                    <span class="not-detected">NOT FOUND</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if item.status == "detected" %}
+                                    <span class="result-status">DETECTED</span>
+                                {% elif item.status == "needs_verification" %}
+                                    <span class="result-status" style="background:#d97832;color:#111111;">VERIFY</span>
+                                {% else %}
+                                    <span class="result-status failed">NOT FOUND</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
+    {% if error %}
+    <div class="alert mt-4">{{ error }}</div>
+    {% endif %}
+
+</main>
+
+<!-- CAMERA -->
+
+<div id="cameraModal" class="camera-modal">
+
+    <div class="camera-box">
+
+        <div class="camera-header">
+            <div>
+                <div class="camera-title">CAPTURE LABEL IMAGE</div>
+                <div class="camera-hint mt-1">Position the label clearly inside the frame.</div>
+            </div>
+            <span class="badge-label">CAMERA</span>
+        </div>
+
+        <video id="cameraVideo" autoplay playsinline></video>
+        <canvas id="cameraCanvas"></canvas>
+
+        <div class="camera-controls">
+            <button type="button" class="btn capture-btn" id="takePictureButton">CAPTURE</button>
+            <button type="button" class="btn btn-outline-primary" id="closeCameraButton">CLOSE CAMERA</button>
+        </div>
+
+    </div>
+</div>
+
+<!-- SCANNING -->
+
+<div id="scanOverlay" class="scan-overlay">
+    <div class="scan-box">
+        <div class="spinner"></div>
+        <h3>Processing Inspection</h3>
+        <p>Preprocessing images and extracting label information...</p>
+    </div>
+</div>
+
+<script>
+    const galleryInput = document.getElementById("galleryInput");
+    const mobileCameraInput = document.getElementById("mobileCameraInput");
+    const cameraButton = document.getElementById("cameraButton");
+    const galleryButton = document.getElementById("galleryButton");
+    const cameraModal = document.getElementById("cameraModal");
+    const cameraVideo = document.getElementById("cameraVideo");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    const takePictureButton = document.getElementById("takePictureButton");
+    const closeCameraButton = document.getElementById("closeCameraButton");
+    const previewContainer = document.getElementById("previewContainer");
+    const emptyState = document.getElementById("emptyState");
+    const imageCount = document.getElementById("imageCount");
+    const scanForm = document.getElementById("scanForm");
+    const scanOverlay = document.getElementById("scanOverlay");
+
+    let selectedFiles = [];
+    let cameraStream = null;
+
+    /* GALLERY */
+
+    galleryButton.addEventListener("click", () => galleryInput.click());
+
+    galleryInput.addEventListener("change", function() {
+        const files = Array.from(this.files);
+        selectedFiles.push(...files);
+        updatePreview();
+        updateFormFiles();
+    });
+
+    /* CAMERA */
+
+    cameraButton.addEventListener("click", async function() {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            mobileCameraInput.click();
+            return;
+        }
+
+        try {
+            cameraStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+
+            cameraVideo.srcObject = cameraStream;
+            cameraModal.classList.add("active");
+        } catch (error) {
+            console.error("Camera error:", error);
+            mobileCameraInput.click();
+        }
+    });
+
+    /* MOBILE CAMERA FALLBACK */
+
+    mobileCameraInput.addEventListener("change", function() {
+        const files = Array.from(this.files);
+        selectedFiles.push(...files);
+        updatePreview();
+        updateFormFiles();
+        this.value = "";
+    });
+
+    /* CAPTURE */
+
+    takePictureButton.addEventListener("click", function() {
+        if (!cameraStream) return;
+
+        const width = cameraVideo.videoWidth;
+        const height = cameraVideo.videoHeight;
+
+        if (!width || !height) {
+            alert("Camera is not ready yet.");
+            return;
+        }
+
+        cameraCanvas.width = width;
+        cameraCanvas.height = height;
+
+        const context = cameraCanvas.getContext("2d");
+        context.drawImage(cameraVideo, 0, 0, width, height);
+
+        cameraCanvas.toBlob(function(blob) {
+            if (!blob) {
+                alert("Could not capture image.");
+                return;
             }
-        });
 
-    </script>
+            const file = new File([blob], `camera-${Date.now()}.jpg`, { type: "image/jpeg" });
+
+            selectedFiles.push(file);
+            updatePreview();
+            updateFormFiles();
+        }, "image/jpeg", 0.90);
+    });
+
+    /* CLOSE CAMERA */
+
+    closeCameraButton.addEventListener("click", closeCamera);
+
+    function closeCamera() {
+        if (cameraStream) {
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraStream = null;
+        }
+
+        cameraVideo.srcObject = null;
+        cameraModal.classList.remove("active");
+    }
+
+    /* PREVIEW */
+
+    function updatePreview() {
+        previewContainer.innerHTML = "";
+        emptyState.style.display = selectedFiles.length === 0 ? "block" : "none";
+        imageCount.textContent = selectedFiles.length;
+
+        selectedFiles.forEach(function(file, index) {
+            const item = document.createElement("div");
+            item.className = "preview-item";
+
+            const img = document.createElement("img");
+
+            const label = document.createElement("div");
+            label.className = "preview-label";
+            label.textContent = `${index + 1}. ${file.name}`;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-image";
+            removeButton.textContent = "×";
+            removeButton.title = "Remove image";
+
+            removeButton.addEventListener("click", function() {
+                selectedFiles.splice(index, 1);
+                updatePreview();
+                updateFormFiles();
+            });
+
+            item.appendChild(img);
+            item.appendChild(removeButton);
+            item.appendChild(label);
+            previewContainer.appendChild(item);
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    /* UPDATE FORM FILES */
+
+    function updateFormFiles() {
+        const dataTransfer = new DataTransfer();
+
+        selectedFiles.forEach(file => dataTransfer.items.add(file));
+
+        galleryInput.files = dataTransfer.files;
+    }
+
+    /* FORM SUBMIT */
+
+    scanForm.addEventListener("submit", function(event) {
+        if (selectedFiles.length === 0) {
+            event.preventDefault();
+            alert("Please capture or select at least one image.");
+            return;
+        }
+
+        updateFormFiles();
+        scanOverlay.classList.add("active");
+    });
+
+    /* ESCAPE */
+
+    document.addEventListener("keydown", function(event) {
+        if (event.key === "Escape" && cameraModal.classList.contains("active")) {
+            closeCamera();
+        }
+    });
+</script>
 
 </body>
 </html>
